@@ -170,24 +170,30 @@ public class CollectionViewWrapper
     // MARK: Update & Adjust
     
     func updateOffset(notification: NSNotification? = nil) {
-        collectionView.reloadData()
-        collectionView.layoutIfNeeded()
         
-        let durationNumber = notification?.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber
-        let duration = durationNumber?.doubleValue ?? 0.1
-        
-        UIView.animateWithDuration(duration) {
-            let number    = self.collectionView.numberOfItemsInSection(0)
-            let itemIndex = self.scrollDelegate.itemIndex ?? number/2
+        dispatch_async(dispatch_get_main_queue()) {
+            self.collectionView.reloadData()
+             self.collectionView.layoutIfNeeded()
             
-            if itemIndex > 0 {
-                let inset      = self.collectionView.contentInset.top
-                let itemHeight = self.collectionLayout.itemHeight
-                let offset     = CGPoint(x: 0, y: CGFloat(itemIndex) * itemHeight - inset)
+            let durationNumber = notification?.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber
+            let duration = durationNumber?.doubleValue ?? 0.1
+            
+            UIView.animateWithDuration(duration) {
+                let number    = self.collectionView.numberOfItemsInSection(0)
+                let itemIndex = self.scrollDelegate.itemIndex ?? number/2
                 
-                self.collectionView.contentOffset = offset
+                if itemIndex > 0 {
+                    let inset      = self.collectionView.contentInset.top
+                    let itemHeight = self.collectionLayout.itemHeight
+                    let offset     = CGPoint(x: 0, y: CGFloat(itemIndex) * itemHeight - inset)
+                    
+                    self.collectionView.contentOffset = offset
+                }
             }
         }
+        
+
+        
     }
     
     func adjustScroll(notification: NSNotification? = nil) {

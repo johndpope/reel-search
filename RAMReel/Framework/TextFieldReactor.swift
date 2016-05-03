@@ -63,7 +63,9 @@ public struct TextFieldReactor
         
         self.editingTarget = TextFieldTarget(controlEvents: UIControlEvents.EditingChanged, textField: textField) {
             if let text = $0.text {
-                dataFlow.transport(text)
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)) {
+                    dataFlow.transport(text)
+                }
             }
         }
     }
